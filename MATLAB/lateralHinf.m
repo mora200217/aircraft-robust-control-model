@@ -6,27 +6,27 @@ latmod.A(5,4) = 0;
 %Peso de las perturbaciones
 Wp      = makeweight(1,[10 0.1],0.01);
 %Peso Error Ángulo Roll
-W1Phi      = makeweight(10,[10 0.1],0.01);
+W1Phi      = makeweight(10,[1 0.1],0.01);
 %Peso Error Ángulo Yaw
-W1Psi      = makeweight(10,[10 0.1],0.01);
+W1Psi      = makeweight(10,[1 0.1],0.01);
 %Peso Señal de Control Aileron
 W2Aileron      = makeweight(0.1,[32 0.32],1);
 %Peso Señal de Control Rudder
 W2Rudder      = makeweight(0.1,[32 0.32],1);
 %Peso Salida Ángulo Roll
-W3Phi      = makeweight(0.01,[10 0.1],10);
+W3Phi      = makeweight(0.01,[1 0.1],10);
 %Peso Salida Ángulo Yaw
-W3Psi      = makeweight(0.01,[10 0.1],10);
+W3Psi      = makeweight(0.01,[1 0.1],10);
 %Peso del ruido
 Wn      = 0.001;
 %Función Delta
-delta = ss([3 0; 0 1.5]);
+%delta = ss([3 0; 0 1.5]);
 
 
-systemnames     = 'latmod Wp Wn W1Phi W1Psi W2Aileron W2Rudder W3Phi W3Psi delta';
+systemnames     = 'latmod Wp Wn W1Phi W1Psi W2Aileron W2Rudder W3Phi W3Psi';
 inputvar        = '[per; n; rPhi; rPsi; uAileron; uRudder]';
 outputvar       = '[W1Phi; W1Psi; W2Aileron; W2Rudder; W3Phi; W3Psi; -latmod(4) - Wn + rPhi;-latmod(5) - Wn + rPsi]';
-input_to_latmod   = '[-Wp + uAileron + delta(1); -Wp + uRudder + delta(2)]';
+input_to_latmod   = '[-Wp + uAileron; -Wp + uRudder]';
 input_to_Wn     = '[n]';
 input_to_Wp     = '[per]';
 input_to_W1Phi     = '[-latmod(4) - Wn + rPhi]';
@@ -35,7 +35,7 @@ input_to_W2Phi     = '[rPhi]';
 input_to_W2Psi     = '[rPsi]';
 input_to_W3Phi     = '[latmod(4)]';
 input_to_W3Psi     = '[latmod(5)]';
-input_to_delta     = '[latmod(4); latmod(5)]';
+%input_to_delta     = '[latmod(4); latmod(5)]';
 
 %Planta generalizada
 Planta = sysic;
@@ -76,8 +76,8 @@ T1psi = feedback(Ltf(5,1),1); %psi/Aileron
 T2psi = feedback(Ltf(5,2),1); %psi/Rudder
 
 % 
-% figure(1)
-% step(Go);
+figure(1)
+step(Go);
 % RespuestaEscalon = stepinfo(Go);
 % 
 % Función de Sensibilidad
