@@ -1,0 +1,96 @@
+CASO 1
+
+W1 = makeweight(db2mag(20),[6 db2mag(-20)],db2mag(-40)); %filtro pasa bajos
+W2=db2mag(-20)*tf(1,1);
+W3 = makeweight(db2mag(-40),[6 db2mag(-20)],db2mag(20)); %filtro pasa altos
+
+ans = 
+        RiseTime: 0.4420
+    SettlingTime: 0.8907
+     SettlingMin: 0.8926
+     SettlingMax: 0.9886
+       Overshoot: 0
+      Undershoot: 0
+            Peak: 0.9886
+        PeakTime: 1.8121
+
+CASO 2
+
+W1 = makeweight(db2mag(20),[6 db2mag(-25)],db2mag(-40)); %filtro pasa bajos
+W2=db2mag(-20)*tf(1,1);
+W3 = makeweight(db2mag(-40),[6 db2mag(-25)],db2mag(20)); %filtro pasa altos
+
+ans = 
+        RiseTime: 0.5306
+    SettlingTime: 1.0925
+     SettlingMin: 0.8990
+     SettlingMax: 0.9938
+       Overshoot: 0
+      Undershoot: 0
+            Peak: 0.9938
+        PeakTime: 2.0829
+
+
+CASO 3
+
+W1 = makeweight(db2mag(20),[6 db2mag(-25)],db2mag(-40)); %filtro pasa bajos
+W2 = makeweight(db2mag(-20),[8 0.16],db2mag(0)); %random
+W3 = makeweight(db2mag(-40),[6 db2mag(-25)],db2mag(20)); %filtro pasa altos
+
+ans = 
+        RiseTime: 0.5519
+    SettlingTime: 1.0340
+     SettlingMin: 0.8972
+     SettlingMax: 0.9924
+       Overshoot: 0
+      Undershoot: 0
+            Peak: 0.9924
+        PeakTime: 1.8469
+
+
+CASO 4
+
+W1 = makeweight(db2mag(20),[6 db2mag(-25)],db2mag(-40)); %filtro pasa bajos
+W2 = makeweight(db2mag(-30),[8 db2mag(-20)],db2mag(0)); 
+W3 = makeweight(db2mag(-40),[6 db2mag(-25)],db2mag(20)); %filtro pasa altos
+ans = 
+        RiseTime: 0.4176
+    SettlingTime: 0.7129
+     SettlingMin: 0.8925
+     SettlingMax: 0.9948
+       Overshoot: 0.3484
+      Undershoot: 0
+            Peak: 0.9948
+        PeakTime: 1.0834
+
+
+CASO 5
+W1 = makeweight(db2mag(27),[6 db2mag(-25)],db2mag(-40)); %filtro pasa bajos
+W2 = makeweight(db2mag(-30),[8 db2mag(-20)],db2mag(10)); 
+W3 = makeweight(db2mag(-40),[6 db2mag(-25)],db2mag(27)); %filtro pasa altos
+
+STINFOact = 
+        RiseTime: 0.410678336914324
+    SettlingTime: 0.707620057928197
+     SettlingMin: 0.897474575655970
+     SettlingMax: 1.000043325156737
+       Overshoot: 0.401027747164817
+      Undershoot: 0
+            Peak: 1.000043325156737
+        PeakTime: 1.063538000867945
+
+
+CASO 6
+W1 = makeweight(db2mag(27),[6 db2mag(-25)],db2mag(-40)); %filtro pasa bajos
+W2 = makeweight(db2mag(-30),[8 db2mag(-20)],db2mag(5)); 
+W3 = makeweight(db2mag(-40),[6 db2mag(-25)],db2mag(27)); %filtro pasa altos
+
+STINFOact = 
+        RiseTime: 0.412239256698317
+    SettlingTime: 0.708577593816425
+     SettlingMin: 0.897277316055928
+     SettlingMax: 1.000012110349417
+       Overshoot: 0.396274302508703
+      Undershoot: 0
+            Peak: 1.000012110349417
+        PeakTime: 1.070497209309953
