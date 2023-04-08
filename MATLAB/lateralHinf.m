@@ -3,25 +3,30 @@ latmod;
 latmod.A(4,4) = 0;
 latmod.A(5,4) = 0;
 
+W1 = makeweight(db2mag(60),[15 db2mag(0)],db2mag(-10)); 
+W2 = makeweight(db2mag(-50),[800 db2mag(-45)],db2mag(-40)); 
+W3 = makeweight(db2mag(-10),[800 db2mag(0)],db2mag(35));
+figure()
+bodemag(W1,W2,W3)
+
 %Peso de las perturbaciones
 Wp      = makeweight(1,[10 0.1],0.01);
 %Peso Error Ángulo Roll
-W1Phi      = makeweight(10,[1 0.1],0.01);
+W1Phi      = W1;
 %Peso Error Ángulo Yaw
-W1Psi      = makeweight(10,[1 0.1],0.01);
+W1Psi      = W1;
 %Peso Señal de Control Aileron
-W2Aileron      = makeweight(0.1,[32 0.32],1);
+W2Aileron      = W2;
 %Peso Señal de Control Rudder
-W2Rudder      = makeweight(0.1,[32 0.32],1);
+W2Rudder      = W2;
 %Peso Salida Ángulo Roll
-W3Phi      = makeweight(0.01,[1 0.1],10);
+W3Phi      = W3;
 %Peso Salida Ángulo Yaw
-W3Psi      = makeweight(0.01,[1 0.1],10);
+W3Psi      = W3;
 %Peso del ruido
 Wn      = 0.001;
 %Función Delta
 %delta = ss([3 0; 0 1.5]);
-
 
 systemnames     = 'latmod Wp Wn W1Phi W1Psi W2Aileron W2Rudder W3Phi W3Psi';
 inputvar        = '[per; n; rPhi; rPsi; uAileron; uRudder]';
@@ -51,82 +56,46 @@ L = latmod*KHinf;
 %Sistema en Lazo cerrado
 Go = feedback(L,eye(2),[1,2],[4,5]);
 
-%Funciones de Transferencia
-Ltf = tf(L);
+%Ancho de banda de los sistemas
+BWPhi = bandwidth(Go(4,1));
+BWPsi = bandwidth(Go(5,2));
 
-%Funciones de Sensibilidad
-S1phi = feedback(1,Ltf(4,1)); %phi/Aileron
-S2phi = feedback(1,Ltf(4,2)); %phi/Rudder
-S1psi = feedback(1,Ltf(5,1)); %psi/Aileron
-S2psi = feedback(1,Ltf(5,2)); %psi/Rudder
-
-%Funciones de Transferencia ganancias
-Ktf = tf(KHinf);
-
-%Funciones de K*Sensibilidad
-KS1phi = Ktf(1,1)*S1phi; %phi/Aileron
-KS2phi = Ktf(1,2)*S2phi; %phi/Rudder
-KS1psi = Ktf(1,1)*S1psi; %psi/Aileron
-KS2psi = Ktf(1,2)*S2psi; %psi/Rudder
-
-%Funciones de Sensibilidad Complementaria
-T1phi = feedback(Ltf(4,1),1); %phi/Aileron
-T2phi = feedback(Ltf(4,2),1); %phi/Rudder
-T1psi = feedback(Ltf(5,1),1); %psi/Aileron
-T2psi = feedback(Ltf(5,2),1); %psi/Rudder
-
-% 
-figure(1)
+% Respuesta al paso del sistema
+figure()
 step(Go);
-% RespuestaEscalon = stepinfo(Go);
-% 
+RespuestaEscalon = stepinfo(Go);
+
+%Función de Sensibilidad Complementaria
+T = feedback(L,eye(2),[1,2],[4,5]);
+
 % Función de Sensibilidad
 % S = feedback(eye(2),L,[1,2],[1,2]);
+S = ones(5,2) - T;
+
 % Función KS
-% KS = S*KHinf;
-% Función de Sensibilidad Complementaria
-T = feedback(L,eye(2),[1,2],[4,5]);
-% 
-% %Comprobaciones W1
-% %Phi
-% figure (2)
-% bodemag(S,'r');
-% hold on
-% bodemag(1/W1Phi,'g');
-% label('S','1/W1Phi')
-% %Psi
-% figure (3)
-% bodemag(S,'r');
-% hold on
-% bodemag(1/W1Psi,'g');
-% label('S','1/W1Psi')
-% 
-% %Comprobaciones W2
-% %Phi
-% figure (4)
-% bodemag(KS,'r');
-% hold on
-% bodemag(1/W2Phi,'g');
-% label('KS','1/W2Phi')
-% %Psi
-% figure (5)
-% bodemag(KS,'r');
-% hold on
-% bodemag(1/W2Psi,'g');
-% label('KS','1/W1Psi')
-% 
-%Comprobaciones W3
-% %Phi
-% figure ()
-% bodemag(T(4,1),'r');
-% hold on
-% bodemag(T(4,2),'b');
-% bodemag(1/W3Phi,'g');
-% label('T_Aileron','T_Rudder','1/W3Phi')
-% %Psi
-% figure ()
-% bodemag(T(5,1),'r');
-% hold on
-% bodemag(T(5,2),'b');
-% bodemag(1/W3Psi,'g');
-% label('T_Aileron','T_Rudder','1/W3Psi')
+KS = S*KHinf;
+
+%Comprobaciones W1
+%Phi
+figure ()
+sigma(S(4,1),'r');
+hold on
+sigma(KS(4,1),'g');
+sigma(T(4,1),'b');
+sigma(1/W1Phi,'r--');
+sigma(1/W2Aileron,'g--');
+sigma(1/W3Phi,'b--');
+legend({'S','KS','T','1/W_1','1/W_2','1/W_3'},'Location','southwest')
+title('Comprobación ángulo \phi')
+
+%Psi
+figure ()
+sigma(S(5,2),'r');
+hold on
+sigma(KS(5,2),'g');
+sigma(T(5,2),'b');
+sigma(1/W1Psi,'r--');
+sigma(1/W2Rudder,'g--');
+sigma(1/W3Psi,'b--');
+legend({'S','KS','T','1/W_1','1/W_2','1/W_3'},'Location','southwest')
+title('Comprobación ángulo \psi')
