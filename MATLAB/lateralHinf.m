@@ -3,17 +3,10 @@ latmod;
 latmod.A(4,4) = 0;
 latmod.A(5,4) = 0;
 
-% W1 = makeweight(db2mag(30),[15 db2mag(0)],db2mag(-40)); 
-% W2 = makeweight(db2mag(-30),[80 db2mag(-25)],db2mag(0)); 
-% W3 = makeweight(db2mag(-40),[80 db2mag(0)],db2mag(30));
+W1 = makeweight(db2mag(23),[15 db2mag(0)],db2mag(-15)); %filtro pasa bajos
+W2 = makeweight(db2mag(-28),[600 db2mag(-25)],db2mag(-5.2)); 
+W3 = makeweight(db2mag(-10),[50 db2mag(0)],db2mag(25)); %filtro pasa altos
 
-W1 = makeweight(db2mag(18),[15 db2mag(0)],db2mag(-15));
-W2 = makeweight(db2mag(-28),[800 db2mag(-25)],db2mag(-5.2)); 
-W3 = makeweight(db2mag(-7.5),[50 db2mag(0)],db2mag(25));
-
-% W1 = makeweight(db2mag(60),[15 db2mag(0)],db2mag(-10)); 
-% W2 = makeweight(db2mag(-50),[800 db2mag(-45)],db2mag(-40)); 
-% W3 = makeweight(db2mag(-10),[800 db2mag(0)],db2mag(35));
 figure()
 bodemag(W1,W2,W3)
 
@@ -22,15 +15,15 @@ Wp      = makeweight(1,[10 0.1],0.01);
 %Peso Error Ángulo Roll
 W1Phi      = W1;
 %Peso Error Ángulo Yaw
-W1Psi      = makeweight(db2mag(23),[15 db2mag(0)],db2mag(-15));
+W1Psi      = W1;%makeweight(db2mag(23),[15 db2mag(0)],db2mag(-15));
 %Peso Señal de Control Aileron
 W2Aileron      = W2;
 %Peso Señal de Control Rudder
-W2Rudder      = makeweight(db2mag(-28),[600 db2mag(-25)],db2mag(-5.2));
+W2Rudder      = W2;%makeweight(db2mag(-28),[600 db2mag(-25)],db2mag(-5.2));
 %Peso Salida Ángulo Roll
 W3Phi      = W3;
 %Peso Salida Ángulo Yaw
-W3Psi      = makeweight(db2mag(-10),[50 db2mag(0)],db2mag(25));
+W3Psi      = W3;%makeweight(db2mag(-10),[50 db2mag(0)],db2mag(25));
 %Peso del ruido
 Wn      = 0.001;
 %Función Delta
@@ -44,8 +37,8 @@ input_to_Wn     = '[n]';
 input_to_Wp     = '[per]';
 input_to_W1Phi     = '[-latmod(4) - Wn + rPhi]';
 input_to_W1Psi     = '[-latmod(5) - Wn + rPsi]';
-input_to_W2Phi     = '[rPhi]';
-input_to_W2Psi     = '[rPsi]';
+input_to_W2Phi     = '[uAileron]';
+input_to_W2Psi     = '[uRudder]';
 input_to_W3Phi     = '[latmod(4)]';
 input_to_W3Psi     = '[latmod(5)]';
 %input_to_delta     = '[latmod(4); latmod(5)]';
@@ -70,8 +63,11 @@ BWPsi = bandwidth(Go(5,2));
 
 % Respuesta al paso del sistema
 figure()
-step(Go);
-RespuestaEscalon = stepinfo(Go);
+step(Go(4,1));
+RespuestaEscalon = stepinfo(Go(4,1));
+figure()
+step(Go(5,2));
+RespuestaEscalon2 = stepinfo(Go(5,2));
 
 %Función de Sensibilidad Complementaria
 T = feedback(L,eye(2),[1,2],[4,5]);
