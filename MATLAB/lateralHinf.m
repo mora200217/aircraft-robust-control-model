@@ -49,17 +49,17 @@ Planta = sysic;
 %Diseño controlador Hinf
 ncont = 2; 
 nmeas = 2; 
-[KHinf,CL,gamma] = hinfsyn(Planta,nmeas,ncont);
+[K_LatDir,CL,gamma] = hinfsyn(Planta,nmeas,ncont);
 
 %Función de Lazo abierto
-L = latmod*KHinf;
+L = latmod*K_LatDir;
 
 %Sistema en Lazo cerrado
 Go = feedback(L,eye(2),[1,2],[4,5]);
 
 %Ancho de banda de los sistemas
-BWPhi = bandwidth(Go(4,1));
-BWPsi = bandwidth(Go(5,2));
+BWPhi = bandwidth(Go(4,1))
+BWPsi = bandwidth(Go(5,2))
 
 % Respuesta al paso del sistema
 figure()
@@ -77,7 +77,7 @@ T = feedback(L,eye(2),[1,2],[4,5]);
 S = ones(5,2) - T;
 
 % Función KS
-KS = S*KHinf;
+KS = S*K_LatDir;
 
 %Comprobaciones W1
 %Phi
