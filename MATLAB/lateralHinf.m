@@ -7,7 +7,7 @@ W1 = makeweight(db2mag(23),[15 db2mag(0)],db2mag(-15)); %filtro pasa bajos
 W2 = makeweight(db2mag(-28),[600 db2mag(-25)],db2mag(-5.2)); 
 W3 = makeweight(db2mag(-10),[50 db2mag(0)],db2mag(25)); %filtro pasa altos
 
-figure()
+figure(1)
 bodemag(W1,W2,W3)
 
 %Peso de las perturbaciones
@@ -62,10 +62,10 @@ BWPhi = bandwidth(Go(4,1))
 BWPsi = bandwidth(Go(5,2))
 
 % Respuesta al paso del sistema
-figure()
+figure(2)
 step(Go(4,1));
 RespuestaEscalon = stepinfo(Go(4,1));
-figure()
+figure(3)
 step(Go(5,2));
 RespuestaEscalon2 = stepinfo(Go(5,2));
 
@@ -81,7 +81,7 @@ KS = S*K_LatDir;
 
 %Comprobaciones W1
 %Phi
-figure ()
+figure (4)
 sigma(S(4,1),'r');
 hold on
 sigma(KS(4,1),'g');
@@ -93,7 +93,59 @@ legend({'S','KS','T','1/W_1','1/W_2','1/W_3'},'Location','southwest')
 title('Comprobación ángulo \phi')
 
 %Psi
-figure ()
+figure (5)
+sigma(S(5,2),'r');
+hold on
+sigma(KS(5,2),'g');
+sigma(T(5,2),'b');
+sigma(1/W1Psi,'r--');
+sigma(1/W2Rudder,'g--');
+sigma(1/W3Psi,'b--');
+legend({'S','KS','T','1/W_1','1/W_2','1/W_3'},'Location','southwest')
+title('Comprobación ángulo \psi')
+
+%Modelo con incertidumbre
+model2 = createUSSmodel(latmod,10);
+
+L = model2*K_LatDir;
+
+%Sistema en Lazo cerrado
+Go = feedback(L,eye(2),[1,2],[4,5]);
+
+% Respuesta al paso del sistema
+figure(6)
+step(Go(4,1));
+RespuestaEscalon = stepinfo(Go(4,1));
+figure(7)
+step(Go(5,2));
+RespuestaEscalon2 = stepinfo(Go(5,2));
+
+%Función de Sensibilidad Complementaria
+T = feedback(L,eye(2),[1,2],[4,5]);
+
+% Función de Sensibilidad
+% S = feedback(eye(2),L,[1,2],[1,2]);
+S = ones(5,2) - T;
+
+% Función KS
+KS = S*K_LatDir;
+
+
+%Comprobaciones W1
+%Phi
+figure (8)
+sigma(S(4,1),'r');
+hold on
+sigma(KS(4,1),'g');
+sigma(T(4,1),'b');
+sigma(1/W1Phi,'r--');
+sigma(1/W2Aileron,'g--');
+sigma(1/W3Phi,'b--');
+legend({'S','KS','T','1/W_1','1/W_2','1/W_3'},'Location','southwest')
+title('Comprobación ángulo \phi')
+
+%Psi
+figure (9)
 sigma(S(5,2),'r');
 hold on
 sigma(KS(5,2),'g');
