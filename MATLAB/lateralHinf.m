@@ -5,7 +5,7 @@ latmod.A(5,4) = 0;
 
 W1 = makeweight(db2mag(23),[15 db2mag(0)],db2mag(-15)); %filtro pasa bajos
 W2 = makeweight(db2mag(-28),[600 db2mag(-25)],db2mag(-5.2)); 
-W3 = makeweight(db2mag(-10),[50 db2mag(0)],db2mag(25)); %filtro pasa altos
+W3 = makeweight(db2mag(-20),[50 db2mag(0)],db2mag(20)); %filtro pasa altos
 
 figure(1)
 bodemag(W1,W2,W3)
